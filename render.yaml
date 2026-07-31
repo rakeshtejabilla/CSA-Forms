@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: form-builder-backend
+    runtime: node
+    rootDir: .
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # You will paste this from Neon
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRY
+        value: 15m
+      - key: JWT_REFRESH_EXPIRY
+        value: 7d
+      - key: PORT
+        value: 10000
+      - key: FILE_UPLOAD_DIR
+        value: ./uploads
+      - key: CORS_ORIGIN
+        sync: false  # Set this to your frontend Render URL after it deploys
+      # Uncomment and set if you add a Redis instance (e.g., Upstash)
+      # - key: REDIS_HOST
+      #   sync: false
+      # - key: REDIS_PORT
+      #   value: "6379"

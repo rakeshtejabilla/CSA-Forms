@@ -1,0 +1,226 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  ORG_ADMIN
+  ENUMERATOR
+}
+
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique
+  description String?
+  email       String?
+  phone       String?
+  address     String?
+  status      String   @default("ACTIVE")
+  createdById String?
+  createdBy   User?    @relation("OrganizationCreator", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  users        User[]
+  forms        FormTemplate[]
+  submissions  Submission[]
+  activityLogs ActivityLog[]
+  auditLogs    AuditLog[]
+  dashboards   Dashboard[]
+}
+
+model User {
+  id             String         @id @default(uuid())
+  email          String         @unique
+  passwordHash   String
+  name           String
+  role           Role           @default(ENUMERATOR)
+  organizationId String?
+  status         String         @default("ACTIVE")
+  hashedRefreshToken String?
+  organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  activityLogs   ActivityLog[]
+  auditLogs      AuditLog[]
+  sharesReceived FormShare[]    @relation("UserShares")
+  formsOwned     FormTemplate[] @relation("UserForms")
+  dashboards     Dashboard[]
+  organizationsCreated Organization[] @relation("OrganizationCreator")
+  prebuiltTemplates PrebuiltTemplate[] @relation("UserPrebuiltTemplates")
+  prebuiltTemplateVersions PrebuiltTemplateVersion[] @relation("UserPrebuiltTemplateVersions")
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String // e.g. "USER_LOGIN", "FORM_CREATE", "FORM_EXPORT"
+  details   String? // JSON string
+  ipAddress      String?
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId])
+}
+
+model FormShare {
+  id        String       @id @default(uuid())
+  formId    String
+  form      FormTemplate @relation("FormShares", fields: [formId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation("UserShares", fields: [userId], references: [id], onDelete: Cascade)
+  canEdit   Boolean      @default(false)
+  canSubmit Boolean      @default(true)
+  canView   Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([formId, userId])
+}
+
+model FormTemplate {
+  id             String  @id @default(uuid())
+  title          String
+  description    String?
+  status         String  @default("DRAFT")
+  version        Int     @default(1)
+  ownerId        String
+  organizationId String?
+
+  fields           Json @default("[]")
+  conditionalLogic Json @default("[]")
+  settings         Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner       User         @relation("UserForms", fields: [ownerId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  submissions Submission[] @relation("FormSubmissions")
+  shares      FormShare[]  @relation("FormShares")
+
+  @@index([ownerId])
+  @@index([organizationId])
+}
+
+model Submission {
+  id            String  @id @default(uuid())
+  formId        String
+  formVersion   Int
+  submitterId   String?
+  submitterName String?
+
+  data Json
+
+  gpsLatitude  Float?
+  gpsLongitude Float?
+  isDraft      Boolean @default(false)
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  submittedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  form FormTemplate @relation("FormSubmissions", fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId, isDraft])
+  @@index([submittedAt])
+  @@index([submitterId])
+  @@index([organizationId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String?
+  entityId   String?
+  metadata       Json?
+  ipAddress      String?
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId])
+  @@map("audit_logs")
+}
+
+model Dashboard {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  ownerId     String
+  isShared    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  owner   User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  widgets DashboardWidget[]
+
+  @@index([organizationId])
+}
+
+model DashboardWidget {
+  id          String   @id @default(uuid())
+  dashboardId String
+  formId      String
+  title       String
+  chartType   String   // bar, line, pie, area, table, kpi
+  queryConfig Json     // { xAxis, yAxis, aggregation, dateRange }
+  layout      Json     // { x, y, w, h }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+}
+
+model PrebuiltTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    String?
+  tags        String[] // Array of tags
+  status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  thumbnail   String?
+  createdById String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User     @relation("UserPrebuiltTemplates", fields: [createdById], references: [id])
+  versions    PrebuiltTemplateVersion[] @relation("TemplateVersions")
+
+  @@index([createdById])
+  @@index([status])
+}
+
+model PrebuiltTemplateVersion {
+  id               String   @id @default(uuid())
+  templateId       String
+  versionNumber    Int      @default(1)
+  
+  fields           Json     @default("[]")
+  conditionalLogic Json     @default("[]")
+  settings         Json     @default("{}")
+
+  createdById      String
+  createdAt        DateTime @default(now())
+
+  template         PrebuiltTemplate @relation("TemplateVersions", fields: [templateId], references: [id], onDelete: Cascade)
+  createdBy        User             @relation("UserPrebuiltTemplateVersions", fields: [createdById], references: [id])
+
+  @@unique([templateId, versionNumber])
+  @@index([templateId])
+}
