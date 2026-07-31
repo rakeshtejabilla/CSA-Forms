@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-slate-800 antialiased font-sans;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* Clean Card Panel */
+  .glass-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Light Input Style */
+  .glass-input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    @apply rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200;
+  }
+}
+
+/* Slick Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Micro-animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite;
+}
+
+/* Shadow utilities */
+.shadow-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.shadow-premium {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* ─── Premium Dark Mode Overrides ────────────────────────────────────────── */
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f8fafc !important;
+}
+
+/* Main Layout & App container */
+.dark .min-h-screen.bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+/* Sidebar & Navigation Panels */
+.dark aside,
+.dark .md\:ml-0 + div,
+.dark nav {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Cards & Panels */
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+/* Outer wrapper grids and panels */
+.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+/* Borders & Separators */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-t,
+.dark .border-b,
+.dark .border-r,
+.dark .border-l,
+.dark .border,
+.dark .divide-slate-100 > *,
+.dark .divide-y > * {
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Headings & Texts */
+.dark .text-slate-800,
+.dark .text-slate-900,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4 {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.dark .text-slate-500,
+.dark .text-slate-400,
+.dark span.text-slate-400 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Form Elements */
+.dark input[type="text"],
+.dark input[type="password"],
+.dark input[type="email"],
+.dark input[type="number"],
+.dark input[type="date"],
+.dark select,
+.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark select option {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark .glass-panel {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .glass-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-slate-50.border-slate-200,
+.dark .bg-slate-50.border {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* Hover effects */
+.dark .hover\:bg-slate-100:hover,
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-200:hover {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:border-slate-300:hover {
+  border-color: #475569 !important;
+}
+
+/* Footers */
+.dark footer {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Buttons and Toggles */
+.dark .bg-slate-200 {
+  background-color: #475569 !important;
+}
+
+.dark .bg-slate-50.border-slate-200.p-1.rounded-xl {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: #1e1b4b !important; /* indigo-950 */
+}
+
+.dark .text-indigo-700 {
+  color: #c7d2fe !important;
+}
+
