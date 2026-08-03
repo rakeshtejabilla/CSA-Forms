@@ -36,10 +36,10 @@ import { PrebuiltTemplatesModule } from './prebuilt-templates/prebuilt-templates
                 port: parseInt(process.env.REDIS_PORT || '6379', 10),
               },
             }),
-          };
+          } as any;
         }
         // No Redis → in-memory cache
-        return { ttl: 60000 };
+        return { ttl: 60000 } as any;
       },
     }),
     QueueModule,
