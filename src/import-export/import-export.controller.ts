@@ -8,11 +8,15 @@ import { extname, join } from 'path';
 import * as fs from 'fs';
 import { AuditLogAction } from '../common/decorators/audit.decorator';
 import { FormsService } from '../forms/forms.service';
+import { ImportService } from './import.service';
+import { ExportService } from './export.service';
 
 const UPLOAD_DIR = join(process.cwd(), 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
+
+const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
 
 @Controller('import-export')
 @UseGuards(JwtAuthGuard)
@@ -21,6 +25,8 @@ export class ImportExportController {
     @InjectQueue('import') private importQueue: Queue,
     @InjectQueue('export') private exportQueue: Queue,
     private readonly formsService: FormsService,
+    private readonly importService: ImportService,
+    private readonly exportService: ExportService,
   ) {}
 
   @Post('import/form/:formId')
@@ -40,14 +46,32 @@ export class ImportExportController {
     // Authorize
     await this.formsService.findOne(formId, req.user);
 
-    const job = await this.importQueue.add('import-submissions', {
-      formId,
-      filePath: file.path,
-      submitterId: req.user.sub,
-      submitterName: req.user.name || 'Imported via API'
-    });
-
-    return { jobId: job.id, message: 'Import queued successfully' };
+    if (redisEnabled) {
+      // Queue-based import when Redis is available
+      const job = await this.importQueue.add('import-submissions', {
+        formId,
+        filePath: file.path,
+        submitterId: req.user.sub,
+        submitterName: req.user.name || 'Imported via API'
+      });
+      return { jobId: job.id, message: 'Import queued successfully' };
+    } else {
+      // Direct synchronous import when Redis is not available
+      const fakeJob: any = {
+        data: {
+          formId,
+          filePath: file.path,
+          submitterId: req.user.sub,
+          submitterName: req.user.name || 'Imported via API',
+        },
+        updateProgress: async () => {},
+      };
+      const result = await this.importService.processImport(fakeJob);
+      return {
+        message: `Import completed. ${result.successCount} rows imported, ${result.failedCount} failed.`,
+        ...result,
+      };
+    }
   }
 
   @Post('export/form/:formId')
@@ -57,19 +81,36 @@ export class ImportExportController {
     await this.formsService.findOne(formId, req.user);
 
     const format = body.format === 'csv' ? 'csv' : 'xlsx';
-    
-    const job = await this.exportQueue.add('export-submissions', {
-      formId,
-      format
-    });
 
-    return { jobId: job.id, message: 'Export queued successfully' };
+    if (redisEnabled) {
+      const job = await this.exportQueue.add('export-submissions', {
+        formId,
+        format
+      });
+      return { jobId: job.id, message: 'Export queued successfully' };
+    } else {
+      // Direct synchronous export when Redis is not available
+      const fakeJob: any = {
+        data: { formId, format },
+        updateProgress: async () => {},
+      };
+      const result = await this.exportService.processExport(fakeJob);
+      return {
+        message: 'Export completed.',
+        ...result,
+      };
+    }
   }
 
   @Get('job/:queueName/:jobId/status')
   async getJobStatus(@Param('queueName') queueName: string, @Param('jobId') jobId: string) {
     if (queueName !== 'import' && queueName !== 'export') {
       throw new BadRequestException('Invalid queue name');
+    }
+
+    if (!redisEnabled) {
+      // Without Redis, jobs are processed synchronously so there's no status to poll
+      return { jobId, state: 'completed', progress: 100, result: null, failedReason: null };
     }
 
     const queue = queueName === 'import' ? this.importQueue : this.exportQueue;
