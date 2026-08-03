@@ -5,6 +5,7 @@ import { ExportService } from './export.service';
 import { ImportExportController } from './import-export.controller';
 import { SubmissionsModule } from '../submissions/submissions.module';
 import { FormsModule } from '../forms/forms.module';
+import { createMockQueueProviders } from '../queue/mock-queue.provider';
 
 const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
 
@@ -17,7 +18,11 @@ const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
       : []),
   ],
   controllers: [ImportExportController],
-  providers: [ImportService, ExportService],
+  providers: [
+    ImportService,
+    ExportService,
+    ...(redisEnabled ? [] : createMockQueueProviders()),
+  ],
   exports: [ImportService, ExportService],
 })
 export class ImportExportModule {}

@@ -6,6 +6,7 @@ import { ExportProcessor } from './processors/export.processor';
 import { NotificationProcessor } from './processors/notification.processor';
 import { QueueMonitorController } from './queue-monitor.controller';
 import { ImportExportModule } from '../import-export/import-export.module';
+import { createMockQueueProviders } from './mock-queue.provider';
 
 const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
 
@@ -39,6 +40,9 @@ const queueProviders = redisEnabled
 @Module({
   imports: [ImportExportModule, ...bullImports],
   controllers: [QueueMonitorController],
-  providers: [...queueProviders],
+  providers: [
+    ...queueProviders,
+    ...(redisEnabled ? [] : createMockQueueProviders()),
+  ],
 })
 export class QueueModule {}

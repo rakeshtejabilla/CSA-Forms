@@ -8,6 +8,7 @@ import { DatabaseHealthIndicator } from './database-health.indicator';
 import { RedisHealthIndicator } from './redis-health.indicator';
 import { QueueHealthIndicator } from './queue-health.indicator';
 import { PrismaService } from '../auth/prisma/prisma.service';
+import { createMockQueueProviders } from '../queue/mock-queue.provider';
 
 const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
 
@@ -30,6 +31,7 @@ const redisEnabled = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
     DatabaseHealthIndicator,
     RedisHealthIndicator,
     QueueHealthIndicator,
+    ...(redisEnabled ? [] : createMockQueueProviders()),
   ],
   exports: [MetricsService],
 })
