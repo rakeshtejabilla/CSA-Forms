@@ -42,6 +42,7 @@ interface BuilderState {
     submitButtonText: string;
     successMessage: string;
     theme: string;
+    conditionalLogic?: any[];
   };
   past: FormField[][];
   future: FormField[][];
