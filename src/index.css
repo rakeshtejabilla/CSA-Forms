@@ -1,0 +1,321 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-slate-800 antialiased font-sans;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* Clean Card Panel */
+  .glass-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Light Input Style */
+  .glass-input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    @apply rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200;
+  }
+}
+
+/* Slick Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Micro-animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite;
+}
+
+/* Shadow utilities */
+.shadow-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.shadow-premium {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* ─── Premium Dark Mode Overrides ────────────────────────────────────────── */
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Level 1: Deepest - the overall page background */
+.dark body {
+  background-color: #080f1e !important;
+  color: #e2e8f0 !important;
+}
+
+/* Main Layout & App container */
+.dark .min-h-screen.bg-slate-50 {
+  background-color: #080f1e !important;
+}
+
+/* Sidebar & Navigation Panels - Level 2 */
+.dark aside,
+.dark .md\:ml-0 + div,
+.dark nav {
+  background-color: #0f172a !important; /* slate-900 */
+  border-right-color: #1e2d40 !important;
+}
+
+/* Level 2: Cards & Panels — visually elevated above the background */
+.dark .bg-white {
+  background-color: #162032 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) !important;
+}
+
+/* Level 3: Nested inner elements — sunken below the card surface */
+.dark .bg-slate-50 {
+  background-color: #0a1323 !important;
+}
+
+
+/* Borders & Separators */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-t,
+.dark .border-b,
+.dark .border-r,
+.dark .border-l,
+.dark .border,
+.dark .divide-slate-100 > *,
+.dark .divide-y > * {
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Headings & Texts */
+.dark .text-slate-800,
+.dark .text-slate-900,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4 {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.dark .text-slate-500,
+.dark .text-slate-400,
+.dark span.text-slate-400 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Form Elements */
+.dark input[type="text"],
+.dark input[type="password"],
+.dark input[type="email"],
+.dark input[type="number"],
+.dark input[type="date"],
+.dark select,
+.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark select option {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark .glass-panel {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .glass-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-slate-50.border-slate-200,
+.dark .bg-slate-50.border {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* Hover effects */
+.dark .hover\:bg-slate-100:hover,
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-200:hover {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:border-slate-300:hover {
+  border-color: #475569 !important;
+}
+
+/* Footers */
+.dark footer {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Buttons and Toggles */
+.dark .bg-slate-200 {
+  background-color: #475569 !important;
+}
+
+.dark .bg-slate-50.border-slate-200.p-1.rounded-xl {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: #1e1b4b !important; /* indigo-950 */
+}
+
+.dark .text-indigo-700 {
+  color: #c7d2fe !important;
+}
+
+/* Comprehensive dark mode overrides for light backgrounds */
+.dark .bg-slate-100,
+.dark .bg-slate-200 {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Translucent dark semantic backgrounds */
+.dark .bg-brand-50, .dark .bg-brand-100, .dark .bg-brand-200,
+.dark .bg-emerald-50, .dark .bg-emerald-100, .dark .bg-emerald-200 {
+  background-color: rgba(6, 78, 59, 0.3) !important; /* emerald/brand-900 with opacity */
+  border-color: rgba(6, 78, 59, 0.5) !important;
+}
+
+.dark .bg-amber-50, .dark .bg-amber-100, .dark .bg-amber-200 {
+  background-color: rgba(120, 53, 15, 0.3) !important; /* amber-900 with opacity */
+  border-color: rgba(120, 53, 15, 0.5) !important;
+}
+
+.dark .bg-rose-50, .dark .bg-rose-100, .dark .bg-rose-200 {
+  background-color: rgba(136, 19, 55, 0.3) !important; /* rose-900 with opacity */
+  border-color: rgba(136, 19, 55, 0.5) !important;
+}
+
+.dark .bg-violet-50, .dark .bg-violet-100, .dark .bg-violet-200 {
+  background-color: rgba(76, 29, 149, 0.3) !important; /* violet-900 with opacity */
+  border-color: rgba(76, 29, 149, 0.5) !important;
+}
+
+.dark .bg-blue-50, .dark .bg-blue-100, .dark .bg-blue-200 {
+  background-color: rgba(30, 58, 138, 0.3) !important; /* blue-900 with opacity */
+  border-color: rgba(30, 58, 138, 0.5) !important;
+}
+
+/* Hover variants for semantic backgrounds */
+.dark .hover\:bg-brand-50:hover, .dark .hover\:bg-brand-100:hover,
+.dark .hover\:bg-emerald-50:hover, .dark .hover\:bg-emerald-100:hover {
+  background-color: rgba(6, 78, 59, 0.5) !important;
+}
+
+.dark .hover\:bg-amber-50:hover, .dark .hover\:bg-amber-100:hover {
+  background-color: rgba(120, 53, 15, 0.5) !important;
+}
+
+.dark .hover\:bg-rose-50:hover, .dark .hover\:bg-rose-100:hover {
+  background-color: rgba(136, 19, 55, 0.5) !important;
+}
+
+.dark .hover\:bg-violet-50:hover, .dark .hover\:bg-violet-100:hover {
+  background-color: rgba(76, 29, 149, 0.5) !important;
+}
+
+.dark .hover\:bg-blue-50:hover, .dark .hover\:bg-blue-100:hover {
+  background-color: rgba(30, 58, 138, 0.5) !important;
+}
+
+/* Additional color families used in audit log badges etc. */
+.dark .bg-purple-50, .dark .bg-purple-100, .dark .bg-purple-200 {
+  background-color: rgba(88, 28, 135, 0.3) !important;
+  border-color: rgba(88, 28, 135, 0.5) !important;
+}
+
+.dark .bg-teal-50, .dark .bg-teal-100, .dark .bg-teal-200 {
+  background-color: rgba(19, 78, 74, 0.3) !important;
+  border-color: rgba(19, 78, 74, 0.5) !important;
+}
+
+.dark .bg-cyan-50, .dark .bg-cyan-100, .dark .bg-cyan-200 {
+  background-color: rgba(22, 78, 99, 0.3) !important;
+  border-color: rgba(22, 78, 99, 0.5) !important;
+}
+
+.dark .bg-fuchsia-50, .dark .bg-fuchsia-100, .dark .bg-fuchsia-200 {
+  background-color: rgba(112, 26, 117, 0.3) !important;
+  border-color: rgba(112, 26, 117, 0.5) !important;
+}
+
+.dark .bg-green-50, .dark .bg-green-100, .dark .bg-green-200 {
+  background-color: rgba(20, 83, 45, 0.3) !important;
+  border-color: rgba(20, 83, 45, 0.5) !important;
+}
+
+.dark .bg-yellow-50, .dark .bg-yellow-100, .dark .bg-yellow-200 {
+  background-color: rgba(113, 63, 18, 0.3) !important;
+  border-color: rgba(113, 63, 18, 0.5) !important;
+}
+
+/* Text color fixes for all badge colors in dark mode */
+.dark .text-purple-700 { color: #d8b4fe !important; }
+.dark .text-teal-700 { color: #99f6e4 !important; }
+.dark .text-cyan-700 { color: #67e8f9 !important; }
+.dark .text-fuchsia-700 { color: #f0abfc !important; }
+.dark .text-green-700 { color: #86efac !important; }
+.dark .text-yellow-700 { color: #fde047 !important; }
+.dark .text-rose-700 { color: #fda4af !important; }
+.dark .text-amber-700 { color: #fcd34d !important; }
+.dark .text-emerald-700 { color: #6ee7b7 !important; }
+.dark .text-violet-700 { color: #c4b5fd !important; }
+.dark .text-blue-700 { color: #93c5fd !important; }
+
+/* Dark scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Settings theme toggle in dark mode */
+.dark .bg-slate-50.border.border-slate-200.p-1.rounded-xl {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}

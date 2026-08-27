@@ -1,0 +1,114 @@
+[
+  {
+    "id": "farmer-registration",
+    "name": "Farmer Registration",
+    "icon": "Users",
+    "description": "Basic farmer registration form containing essential farmer and farm information.",
+    "formDefinition": {
+      "title": "Farmer Registration",
+      "description": "Please fill out the basic farmer and farm details.",
+      "settings": {
+        "submitButtonText": "Register Farmer",
+        "successMessage": "Farmer registered successfully."
+      },
+      "fields": [
+        {
+          "id": "f_fullname",
+          "type": "text",
+          "label": "Full Name",
+          "required": true,
+          "placeholder": "Enter full name"
+        },
+        {
+          "id": "f_gender",
+          "type": "select",
+          "label": "Gender",
+          "required": true,
+          "options": ["Male", "Female", "Other"]
+        },
+        {
+          "id": "f_dob",
+          "type": "date",
+          "label": "Age / Date of Birth",
+          "required": true
+        },
+        {
+          "id": "f_mobile",
+          "type": "text",
+          "label": "Mobile Number",
+          "required": true,
+          "placeholder": "Enter mobile number"
+        },
+        {
+          "id": "f_village",
+          "type": "text",
+          "label": "Village",
+          "required": true,
+          "placeholder": "Enter village name"
+        },
+        {
+          "id": "f_district",
+          "type": "text",
+          "label": "District",
+          "required": true,
+          "placeholder": "Enter district name"
+        },
+        {
+          "id": "f_state",
+          "type": "text",
+          "label": "State",
+          "required": true,
+          "placeholder": "Enter state name"
+        },
+        {
+          "id": "f_landholding",
+          "type": "number",
+          "label": "Total Land Holding (Acres)",
+          "required": true,
+          "placeholder": "e.g. 5.5"
+        },
+        {
+          "id": "f_ownership",
+          "type": "select",
+          "label": "Ownership Type",
+          "required": true,
+          "options": ["Owned", "Leased", "Shared"]
+        },
+        {
+          "id": "f_primarycrop",
+          "type": "select",
+          "label": "Primary Crop",
+          "required": true,
+          "options": [
+            "Paddy",
+            "Wheat",
+            "Maize",
+            "Cotton",
+            "Sugarcane",
+            "Groundnut",
+            "Soybean",
+            "Vegetables",
+            "Fruits",
+            "Others"
+          ]
+        },
+        {
+          "id": "f_irrigation",
+          "type": "checkbox",
+          "label": "Irrigation Source",
+          "required": true,
+          "options": [
+            "Borewell",
+            "Canal",
+            "River",
+            "Pond",
+            "Rainfed",
+            "Drip Irrigation",
+            "Sprinkler",
+            "Others"
+          ]
+        }
+      ]
+    }
+  }
+]
