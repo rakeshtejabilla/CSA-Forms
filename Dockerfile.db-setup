@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+RUN apk add --no-cache openssl make gcc g++ python3 postgresql-client
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY prisma ./prisma
+RUN npx prisma generate
+
+COPY database/seed.js ./seed.js
+
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node seed.js"]
