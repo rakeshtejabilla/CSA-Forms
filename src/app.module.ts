@@ -11,7 +11,7 @@ import { GatewayController } from './gateway.controller';
 import { AuditModule } from './audit/audit.module';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 // import { QueueModule } from './queue/queue.module';
-// import { ImportExportModule } from './import-export/import-export.module';
+import { ImportExportModule } from './import-export/import-export.module';
 // import { MonitoringModule } from './monitoring/monitoring.module';
 import { CacheModule } from '@nestjs/cache-manager';
 // import { redisStore } from 'cache-manager-redis-yet';
@@ -38,7 +38,7 @@ import { FarmersModule } from './farmers/farmers.module';
     //   }),
     // }),
     // QueueModule,
-    // ImportExportModule,
+    ImportExportModule,
     // MonitoringModule,
     AuditModule,
     AuthModule,
