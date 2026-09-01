@@ -147,32 +147,10 @@ export default function SubmissionsPage() {
         }
       );
       
-      const jobId = response.data.jobId;
-      const resultMsg = await new Promise<string>((resolve, reject) => {
-        const interval = setInterval(async () => {
-          try {
-            const res = await axios.get(`${API_URL}/import-export/job/import/${jobId}/status`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.state === 'completed') {
-              clearInterval(interval);
-              const jobResult = res.data.result;
-              if (jobResult && jobResult.failedCount > 0) {
-                // Return errors so we can show them in the modal
-                reject(new Error(jobResult.errors.join('|||')));
-              } else {
-                resolve('Import completed successfully!');
-              }
-            } else if (res.data.state === 'failed') {
-              clearInterval(interval);
-              reject(new Error(res.data.failedReason || 'Import failed'));
-            }
-          } catch (err) {
-            clearInterval(interval);
-            reject(err);
-          }
-        }, 1000);
-      });
+      const jobResult = response.data;
+      if (jobResult && jobResult.failedCount > 0) {
+        throw new Error(jobResult.errors.join('|||'));
+      }
 
       // Reload submissions on success
       const subRes = await axios.get(`${API_URL}/submissions/form/${selectedFormId}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -237,28 +215,6 @@ export default function SubmissionsPage() {
     fetchSubmissions();
   }, [selectedFormId]);
 
-  const pollExportJob = async (jobId: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const interval = setInterval(async () => {
-        try {
-          const res = await axios.get(`${API_URL}/import-export/job/export/${jobId}/status`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (res.data.state === 'completed') {
-            clearInterval(interval);
-            resolve(res.data.result.downloadUrl);
-          } else if (res.data.state === 'failed') {
-            clearInterval(interval);
-            reject(new Error(res.data.failedReason || 'Export failed'));
-          }
-        } catch (err) {
-          clearInterval(interval);
-          reject(err);
-        }
-      }, 1000);
-    });
-  };
-
   const handleExport = async (format: 'csv' | 'xlsx') => {
     if (!selectedFormId) return;
     setLoading(true);
@@ -267,17 +223,19 @@ export default function SubmissionsPage() {
       const res = await axios.post(`${API_URL}/import-export/export/form/${selectedFormId}`, { format }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const downloadUrl = await pollExportJob(res.data.jobId);
+      const downloadUrl = res.data.downloadUrl;
       
       const link = document.createElement('a');
       // Construct full URL if needed, but relative should work assuming API_URL proxy setup or same domain
-      link.href = downloadUrl;
+      const baseUrl = API_URL.endsWith('/api') ? API_URL.substring(0, API_URL.length - 4) : API_URL;
+      link.href = `${baseUrl}${downloadUrl}`;
       link.setAttribute('download', '');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (err: any) {
       setErrorMsg(err.message || 'Export failed');
+
     } finally {
       setLoading(false);
     }

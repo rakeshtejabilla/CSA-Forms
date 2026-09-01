@@ -160,29 +160,12 @@ export default function ManageForms() {
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
       );
       
-      const jobId = response.data.jobId;
-      const resultMsg = await new Promise<string>((resolve, reject) => {
-        const interval = setInterval(async () => {
-          try {
-            const res = await axios.get(`${API_URL}/import-export/job/import/${jobId}/status`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.state === 'completed') {
-              clearInterval(interval);
-              const jobResult = res.data.result;
-              if (jobResult && jobResult.failedCount > 0) {
-                reject(new Error(jobResult.errors.join('|||')));
-              } else {
-                resolve('Import completed successfully!');
-              }
-            }
-            else if (res.data.state === 'failed') { clearInterval(interval); reject(new Error(res.data.failedReason || 'Import failed')); }
-            else { setDataImportStatus(`Importing... Progress: ${res.data.progress || 0}%`); }
-          } catch (err) { clearInterval(interval); reject(err); }
-        }, 1000);
-      });
+      const jobResult = response.data;
+      if (jobResult && jobResult.failedCount > 0) {
+        throw new Error(jobResult.errors.join('|||'));
+      }
       
-      setDataImportStatus(resultMsg as string);
+      setDataImportStatus('Import completed successfully!');
       setShowPreviewModal(false);
       setTimeout(() => { setShowImportDataModal(false); setDataImportStatus(''); }, 3000);
     } catch (err: any) {
