@@ -1,13 +1,13 @@
 import { Controller, Post, Get, Param, Body, UseInterceptors, UploadedFile, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import * as fs from 'fs';
 import { AuditLogAction } from '../common/decorators/audit.decorator';
 import { FormsService } from '../forms/forms.service';
+import { ImportService } from './import.service';
+import { ExportService } from './export.service';
 
 const UPLOAD_DIR = join(process.cwd(), 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -18,8 +18,8 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 @UseGuards(JwtAuthGuard)
 export class ImportExportController {
   constructor(
-    @InjectQueue('import') private importQueue: Queue,
-    @InjectQueue('export') private exportQueue: Queue,
+    private readonly importService: ImportService,
+    private readonly exportService: ExportService,
     private readonly formsService: FormsService,
   ) {}
 
@@ -34,60 +34,34 @@ export class ImportExportController {
     })
   }))
   @AuditLogAction('IMPORT_DATA', 'Farmer')
-  async queueImport(@Param('formId') formId: string, @UploadedFile() file: Express.Multer.File, @Req() req: any) {
+  async runImport(@Param('formId') formId: string, @UploadedFile() file: Express.Multer.File, @Req() req: any) {
     if (!file) throw new BadRequestException('No file uploaded');
 
     // Authorize
     await this.formsService.findOne(formId, req.user);
 
-    const job = await this.importQueue.add('import-submissions', {
+    // Run synchronously (no queue)
+    const result = await this.importService.processImport({
       formId,
       filePath: file.path,
       submitterId: req.user.sub,
-      submitterName: req.user.name || 'Imported via API'
+      submitterName: req.user.name || 'Imported via API',
     });
 
-    return { jobId: job.id, message: 'Import queued successfully' };
+    return result;
   }
 
   @Post('export/form/:formId')
   @AuditLogAction('EXPORT_DATA', 'Submission')
-  async queueExport(@Param('formId') formId: string, @Body() body: { format?: 'csv' | 'xlsx' }, @Req() req: any) {
+  async runExport(@Param('formId') formId: string, @Body() body: { format?: 'csv' | 'xlsx' }, @Req() req: any) {
     // Authorize
     await this.formsService.findOne(formId, req.user);
 
     const format = body.format === 'csv' ? 'csv' : 'xlsx';
-    
-    const job = await this.exportQueue.add('export-submissions', {
-      formId,
-      format
-    });
 
-    return { jobId: job.id, message: 'Export queued successfully' };
-  }
+    // Run synchronously (no queue)
+    const result = await this.exportService.processExport({ formId, format });
 
-  @Get('job/:queueName/:jobId/status')
-  async getJobStatus(@Param('queueName') queueName: string, @Param('jobId') jobId: string) {
-    if (queueName !== 'import' && queueName !== 'export') {
-      throw new BadRequestException('Invalid queue name');
-    }
-
-    const queue = queueName === 'import' ? this.importQueue : this.exportQueue;
-    const job = await queue.getJob(jobId);
-
-    if (!job) {
-      throw new BadRequestException('Job not found');
-    }
-
-    const state = await job.getState();
-    const progress = job.progress;
-    
-    return {
-      jobId: job.id,
-      state,
-      progress,
-      result: job.returnvalue,
-      failedReason: job.failedReason,
-    };
+    return result;
   }
 }

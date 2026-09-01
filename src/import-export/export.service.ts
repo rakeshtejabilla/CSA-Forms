@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as xlsx from 'xlsx';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PrismaService } from '../submissions/prisma/prisma.service'; // Adjust path if needed
-import { Job } from 'bullmq';
+import { PrismaService } from '../submissions/prisma/prisma.service';
 
 @Injectable()
 export class ExportService {
@@ -11,8 +10,8 @@ export class ExportService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async processExport(job: Job) {
-    const { formId, format } = job.data;
+  async processExport(params: { formId: string; format: 'csv' | 'xlsx' }) {
+    const { formId, format } = params;
     this.logger.log(`Processing export for form ${formId} format ${format}`);
 
     try {
@@ -20,8 +19,6 @@ export class ExportService {
       if (!form) {
         throw new Error(`Form with ID ${formId} not found`);
       }
-
-      await job.updateProgress(10);
 
       const totalSubmissions = await this.prisma.submission.count({
         where: { formId, isDraft: false, }
@@ -68,7 +65,7 @@ export class ExportService {
         });
 
         for (const sub of batch) {
-          const parentRowIndex = processed + 1; // 1-based index for linking
+          const parentRowIndex = processed + 1;
           const parentRow = [
             parentRowIndex,
             sub.id,
@@ -81,7 +78,6 @@ export class ExportService {
           for (const field of parentFields) {
             let val = data[field.id];
             if (field.type === 'repeat' || (field.type as string) === 'begin_repeat') {
-              // Write repeat count as summary
               parentRow.push(Array.isArray(val) ? val.length : 0);
             } else {
               if (Array.isArray(val)) val = val.join(', ');
@@ -113,9 +109,6 @@ export class ExportService {
 
           processed++;
         }
-
-        const progress = 10 + Math.floor((processed / totalSubmissions) * 80);
-        await job.updateProgress(progress);
       }
 
       const wb = xlsx.utils.book_new();
@@ -124,10 +117,9 @@ export class ExportService {
       const ws = xlsx.utils.aoa_to_sheet(parentWorksheetData);
       xlsx.utils.book_append_sheet(wb, ws, 'Submissions');
 
-      // Append child sheets if format is xlsx (csv doesn't support multiple sheets)
+      // Append child sheets if format is xlsx
       if (format !== 'csv') {
         childWorksheetsData.forEach((rowsData, childFieldId) => {
-          // Limit sheet name to 31 chars (Excel limit)
           const sheetName = childFieldId.substring(0, 31);
           const childWs = xlsx.utils.aoa_to_sheet(rowsData);
           xlsx.utils.book_append_sheet(wb, childWs, sheetName);
@@ -149,8 +141,6 @@ export class ExportService {
       } else {
         xlsx.writeFile(wb, filePath);
       }
-
-      await job.updateProgress(100);
 
       return {
         success: true,

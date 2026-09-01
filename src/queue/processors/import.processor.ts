@@ -9,6 +9,6 @@ export class ImportProcessor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    return this.importService.processImport(job);
+    return this.importService.processImport(job.data);
   }
 }

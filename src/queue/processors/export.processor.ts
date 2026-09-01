@@ -9,6 +9,6 @@ export class ExportProcessor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    return this.exportService.processExport(job);
+    return this.exportService.processExport(job.data);
   }
 }

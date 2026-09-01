@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as xlsx from 'xlsx';
 import * as fs from 'fs';
-import { PrismaService } from '../submissions/prisma/prisma.service'; // Adjust path if needed
-import { Job } from 'bullmq';
+import { PrismaService } from '../submissions/prisma/prisma.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 
 @Injectable()
@@ -34,8 +33,8 @@ export class ImportService {
     return undefined;
   }
 
-  async processImport(job: Job) {
-    const { formId, filePath, submitterId, submitterName } = job.data;
+  async processImport(params: { formId: string; filePath: string; submitterId?: string; submitterName?: string }) {
+    const { formId, filePath, submitterId, submitterName } = params;
     this.logger.log(`Processing import for form ${formId} from file ${filePath}`);
 
     try {
@@ -44,7 +43,6 @@ export class ImportService {
         throw new Error(`Form with ID ${formId} not found`);
       }
 
-      await job.updateProgress(10);
 
       const workbook = xlsx.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
@@ -55,7 +53,7 @@ export class ImportService {
         throw new Error('No data rows found in the uploaded file');
       }
 
-      await job.updateProgress(20);
+
 
       const fields = (form.fields || []) as any[];
       const mapToFarmers = (form.settings as any)?.mapToFarmers === true;
@@ -251,10 +249,7 @@ export class ImportService {
         }
 
         // Update progress every 10%
-        if (index % Math.max(1, Math.floor(rows.length / 10)) === 0) {
-          const progress = 20 + Math.floor((index / rows.length) * 80);
-          await job.updateProgress(progress);
-        }
+
       }
 
       // Cleanup file
@@ -262,7 +257,6 @@ export class ImportService {
         fs.unlinkSync(filePath);
       }
 
-      await job.updateProgress(100);
 
       return {
         success: true,
