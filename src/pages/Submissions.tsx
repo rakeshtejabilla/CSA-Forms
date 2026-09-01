@@ -156,7 +156,7 @@ export default function SubmissionsPage() {
       const subRes = await axios.get(`${API_URL}/submissions/form/${selectedFormId}`, { headers: { Authorization: `Bearer ${token}` } });
       setSubmissions(subRes.data.data || subRes.data);
       setShowPreviewModal(false);
-      alert(resultMsg);
+      alert('Import completed successfully!');
     } catch (err: any) {
       let errArray: string[] = [];
       const msg = err.message || '';
