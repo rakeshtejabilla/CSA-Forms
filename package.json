@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/seed.js && node dist/main.js",
+    "start": "npx prisma db push --accept-data-loss && node dist/seed.js && node dist/main.js",
     "start:dev": "ts-node src/main.ts",
     "prisma:migrate": "npx prisma migrate deploy",
     "prisma:generate": "npx prisma generate"
