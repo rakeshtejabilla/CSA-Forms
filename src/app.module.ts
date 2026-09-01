@@ -10,11 +10,11 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { GatewayController } from './gateway.controller';
 import { AuditModule } from './audit/audit.module';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
-import { QueueModule } from './queue/queue.module';
-import { ImportExportModule } from './import-export/import-export.module';
-import { MonitoringModule } from './monitoring/monitoring.module';
+// import { QueueModule } from './queue/queue.module';
+// import { ImportExportModule } from './import-export/import-export.module';
+// import { MonitoringModule } from './monitoring/monitoring.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-yet';
+// import { redisStore } from 'cache-manager-redis-yet';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { PrebuiltTemplatesModule } from './prebuilt-templates/prebuilt-templates.module';
 import { FarmersModule } from './farmers/farmers.module';
@@ -25,20 +25,21 @@ import { FarmersModule } from './farmers/farmers.module';
       ttl: 60000,
       limit: 1000,
     }]),
-    CacheModule.registerAsync({
-      isGlobal: true,
-      useFactory: async () => ({
-        store: await redisStore({
-          socket: {
-            host: process.env.REDIS_HOST || 'localhost',
-            port: parseInt(process.env.REDIS_PORT || '6379', 10),
-          },
-        }),
-      }),
-    }),
-    QueueModule,
-    ImportExportModule,
-    MonitoringModule,
+    CacheModule.register({ isGlobal: true }),
+    // CacheModule.registerAsync({
+    //   isGlobal: true,
+    //   useFactory: async () => ({
+    //     store: await redisStore({
+    //       socket: {
+    //         host: process.env.REDIS_HOST || 'localhost',
+    //         port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    //       },
+    //     }),
+    //   }),
+    // }),
+    // QueueModule,
+    // ImportExportModule,
+    // MonitoringModule,
     AuditModule,
     AuthModule,
     FormsModule,
