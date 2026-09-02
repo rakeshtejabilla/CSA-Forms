@@ -489,7 +489,6 @@ export class SubmissionsService {
           mandal: mandalVal,
           village: villageVal,
           organizationId: form.organizationId,
-          assignedOrganization: assignedOrgVal || null,
           estimatedYield: estYieldVal || null,
           timestamp: parsedDate,
         });
