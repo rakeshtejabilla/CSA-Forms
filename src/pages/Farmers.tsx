@@ -733,7 +733,7 @@ export default function Farmers() {
               {/* Organization (for Super Admin only) */}
               {user?.role === 'SUPER_ADMIN' && (
                 <div>
-                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Assigned Organization *</label>
+                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Organization *</label>
                   <select
                     required
                     value={formOrganizationId}
@@ -879,28 +879,16 @@ export default function Farmers() {
                 </div>
               </div>
 
-              {/* Assigned Org & Est Yield */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Assigned Organization</label>
-                  <input
-                    type="text"
-                    value={formAssignedOrganization}
-                    onChange={e => setFormAssignedOrganization(e.target.value)}
-                    placeholder="Enter assigned org"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-850 focus:outline-none focus:border-brand-400 transition"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Estimated Yield</label>
-                  <input
-                    type="text"
-                    value={formEstimatedYield}
-                    onChange={e => setFormEstimatedYield(e.target.value)}
-                    placeholder="e.g. 500 kg, 20 bags"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-850 focus:outline-none focus:border-brand-400 transition"
-                  />
-                </div>
+              {/* Est Yield */}
+              <div>
+                <label className="text-xs text-slate-500 font-semibold mb-1 block">Estimated Yield</label>
+                <input
+                  type="text"
+                  value={formEstimatedYield}
+                  onChange={e => setFormEstimatedYield(e.target.value)}
+                  placeholder="e.g. 500 kg, 20 bags"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-850 focus:outline-none focus:border-brand-400 transition"
+                />
               </div>
 
               {/* Timestamp */}
