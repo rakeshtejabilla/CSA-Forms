@@ -27,7 +27,6 @@ interface Farmer {
   mandal: string;
   village: string;
   organizationId: string | null;
-  assignedOrganization: string | null;
   estimatedYield: string | null;
   timestamp: string;
   createdAt: string;
@@ -159,7 +158,6 @@ export default function Farmers() {
   const [formDistrict, setFormDistrict] = useState('');
   const [formMandal, setFormMandal] = useState('');
   const [formVillage, setFormVillage] = useState('');
-  const [formAssignedOrganization, setFormAssignedOrganization] = useState('');
   const [formEstimatedYield, setFormEstimatedYield] = useState('');
   const [formTimestamp, setFormTimestamp] = useState('');
 
@@ -273,7 +271,6 @@ export default function Farmers() {
     setFormDistrict('');
     setFormMandal('');
     setFormVillage('');
-    setFormAssignedOrganization('');
     setFormEstimatedYield('');
     setFormTimestamp(new Date().toISOString().slice(0, 16)); // format local YYYY-MM-DDTHH:MM
     setFormOrganizationId('');
@@ -293,7 +290,6 @@ export default function Farmers() {
     setFormDistrict(f.district);
     setFormMandal(f.mandal);
     setFormVillage(f.village);
-    setFormAssignedOrganization(f.assignedOrganization || '');
     setFormEstimatedYield(f.estimatedYield || '');
     setFormTimestamp(f.timestamp ? new Date(f.timestamp).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
     setFormOrganizationId(f.organizationId || '');
@@ -315,7 +311,6 @@ export default function Farmers() {
       district: formDistrict,
       mandal: formMandal,
       village: formVillage,
-      assignedOrganization: formAssignedOrganization || null,
       estimatedYield: formEstimatedYield || null,
       timestamp: formTimestamp ? new Date(formTimestamp).toISOString() : new Date().toISOString(),
       organizationId: formOrganizationId || undefined,
@@ -659,7 +654,6 @@ export default function Farmers() {
                         <th className="py-2.5 px-4">Year / Date</th>
                         <th className="py-2.5 px-4">Crop Name</th>
                         <th className="py-2.5 px-4">Land Size</th>
-                        <th className="py-2.5 px-4">Assigned Org</th>
                         <th className="py-2.5 px-4">Est. Yield</th>
                         <th className="py-2.5 px-4">Survey Age</th>
                         <th className="py-2.5 px-4 text-right">Actions</th>
@@ -679,7 +673,6 @@ export default function Farmers() {
                           </td>
                           <td className="py-2.5 px-4 font-semibold text-indigo-600">{f.cropName || '—'}</td>
                           <td className="py-2.5 px-4 font-medium text-slate-600">{f.landSizeAcres || 0} acres</td>
-                          <td className="py-2.5 px-4 text-slate-600">{f.assignedOrganization || '—'}</td>
                           <td className="py-2.5 px-4 font-semibold text-emerald-600">{f.estimatedYield || '—'}</td>
                           <td className="py-2.5 px-4 text-slate-500">{f.age} years old</td>
                           <td className="py-2.5 px-4 text-right">

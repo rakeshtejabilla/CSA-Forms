@@ -33,7 +33,6 @@ interface Farmer {
   mandal: string;
   village: string;
   organizationId: string | null;
-  assignedOrganization: string | null;
   estimatedYield: string | null;
   timestamp: string;
   createdAt: string;
@@ -147,7 +146,6 @@ export default function FarmersMasterList() {
   const [formDistrict, setFormDistrict] = useState('');
   const [formMandal, setFormMandal] = useState('');
   const [formVillage, setFormVillage] = useState('');
-  const [formAssignedOrganization, setFormAssignedOrganization] = useState('');
   const [formEstimatedYield, setFormEstimatedYield] = useState('');
   const [formTimestamp, setFormTimestamp] = useState('');
   const [formOrganizationId, setFormOrganizationId] = useState('');
@@ -197,7 +195,7 @@ export default function FarmersMasterList() {
   const resetForm = () => {
     setFormName(''); setFormAge(''); setFormPhone(''); setFormAadhaar('');
     setFormCropName(''); setFormLandSize(''); setFormState(''); setFormDistrict('');
-    setFormMandal(''); setFormVillage(''); setFormAssignedOrganization('');
+    setFormMandal(''); setFormVillage('');
     setFormEstimatedYield(''); setFormOrganizationId('');
     setFormTimestamp(new Date().toISOString().slice(0, 16));
   };
@@ -215,7 +213,6 @@ export default function FarmersMasterList() {
     setFormCropName(f.cropName); setFormLandSize(String(f.landSizeAcres));
     setFormState(f.state); setFormDistrict(f.district);
     setFormMandal(f.mandal); setFormVillage(f.village);
-    setFormAssignedOrganization(f.assignedOrganization || '');
     setFormEstimatedYield(f.estimatedYield || '');
     setFormTimestamp(f.timestamp ? new Date(f.timestamp).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
     setFormOrganizationId(f.organizationId || '');
@@ -232,7 +229,6 @@ export default function FarmersMasterList() {
       cropName: formCropName, landSizeAcres: parseFloat(formLandSize || '0'),
       state: formState, district: formDistrict,
       mandal: formMandal, village: formVillage,
-      assignedOrganization: formAssignedOrganization || null,
       estimatedYield: formEstimatedYield || null,
       timestamp: formTimestamp ? new Date(formTimestamp).toISOString() : new Date().toISOString(),
       organizationId: formOrganizationId || undefined,
@@ -661,16 +657,10 @@ export default function FarmersMasterList() {
                 </div>
               </div>
 
-              {/* Assigned Org & Est. Yield */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Assigned Organization</label>
-                  <input type="text" value={formAssignedOrganization} onChange={e => setFormAssignedOrganization(e.target.value)} placeholder="Enter assigned org" className={inputClass} />
-                </div>
-                <div>
-                  <label className="text-xs text-slate-500 font-semibold mb-1 block">Estimated Yield</label>
-                  <input type="text" value={formEstimatedYield} onChange={e => setFormEstimatedYield(e.target.value)} placeholder="e.g. 500 kg, 20 bags" className={inputClass} />
-                </div>
+              {/* Est. Yield */}
+              <div>
+                <label className="text-xs text-slate-500 font-semibold mb-1 block">Estimated Yield</label>
+                <input type="text" value={formEstimatedYield} onChange={e => setFormEstimatedYield(e.target.value)} placeholder="e.g. 500 kg, 20 bags" className={inputClass} />
               </div>
 
               {/* Timestamp */}
