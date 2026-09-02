@@ -197,7 +197,6 @@ export class ImportService {
           const districtVal = String(this.findValue(row, mappedData, ['district']) || '');
           const mandalVal = String(this.findValue(row, mappedData, ['mandal', 'block', 'tehsil']) || '');
           const villageVal = String(this.findValue(row, mappedData, ['village']) || '');
-          const assignedOrgVal = String(this.findValue(row, mappedData, ['assigned_org', 'assignedorg', 'assignedorganization', 'assigned organization']) || '');
           const estYieldVal = String(this.findValue(row, mappedData, ['estimated_yield', 'estimatedyield', 'estimated yield', 'est_yield', 'yield']) || '');
 
           const tsVal = this.findValue(row, mappedData, ['timestamp', 'time', 'date']);
@@ -236,7 +235,6 @@ export class ImportService {
                 mandal: mandalVal,
                 village: villageVal,
                 organizationId: form.organizationId,
-                assignedOrganization: assignedOrgVal || null,
                 estimatedYield: estYieldVal || null,
                 timestamp: parsedDate,
               }

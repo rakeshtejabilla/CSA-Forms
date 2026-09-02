@@ -241,7 +241,7 @@ model Farmer {
   village        String
   organizationId       String?
   organization         Organization? @relation(fields: [organizationId], references: [id])
-  assignedOrganization String?
+
   estimatedYield       String?
   timestamp            DateTime      @default(now())
   createdAt            DateTime      @default(now())

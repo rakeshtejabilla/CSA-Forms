@@ -70,7 +70,7 @@ export class SubmissionsService {
         const districtVal = String(findValue(payload.data, ['district']) || '');
         const mandalVal = String(findValue(payload.data, ['mandal', 'block', 'tehsil']) || '');
         const villageVal = String(findValue(payload.data, ['village']) || '');
-        const assignedOrgVal = String(findValue(payload.data, ['assigned_org', 'assignedorg', 'assignedorganization', 'assigned organization']) || '');
+
         const estYieldVal = String(findValue(payload.data, ['estimated_yield', 'estimatedyield', 'estimated yield', 'est_yield', 'yield']) || '');
 
         const tsVal = findValue(payload.data, ['timestamp', 'time', 'date']);
@@ -95,7 +95,6 @@ export class SubmissionsService {
             mandal: mandalVal,
             village: villageVal,
             organizationId: form.organizationId,
-            assignedOrganization: assignedOrgVal || null,
             estimatedYield: estYieldVal || null,
             timestamp: parsedDate,
           }
@@ -455,7 +454,7 @@ export class SubmissionsService {
         const districtVal = String(findValue(row, mappedData, ['district']) || '');
         const mandalVal = String(findValue(row, mappedData, ['mandal', 'block', 'tehsil']) || '');
         const villageVal = String(findValue(row, mappedData, ['village']) || '');
-        const assignedOrgVal = String(findValue(row, mappedData, ['assigned_org', 'assignedorg', 'assignedorganization', 'assigned organization']) || '');
+
         const estYieldVal = String(findValue(row, mappedData, ['estimated_yield', 'estimatedyield', 'estimated yield', 'est_yield', 'yield']) || '');
 
         const tsVal = findValue(row, mappedData, ['timestamp', 'time', 'date']);
